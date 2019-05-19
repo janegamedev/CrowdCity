@@ -4,7 +4,14 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    float timeLeft=60;
+    float timeLeft=3;
+
+    public GameObject npc;
+
+    private void Start()
+    {
+        SpawnNpc();
+    }
 
     private void Update()
     {
@@ -15,8 +22,15 @@ public class GameManager : MonoBehaviour
     {
         timeLeft -= Time.deltaTime;
         if(timeLeft<=0)
-            Debug.Log("game over");
-
-        Debug.Log(timeLeft);
+        {
+            SpawnNpc();
+            timeLeft = 3;
+        }
     }
+
+    void SpawnNpc()
+    {
+        Instantiate(npc);
+    }
+  
 }
