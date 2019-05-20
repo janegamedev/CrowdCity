@@ -7,9 +7,11 @@ public class NpcController : MonoBehaviour
 {
     public bool isFollowing;  //Check if npc is following player or just wondering
 
+    int offset = 3;
     Vector3 dir;
     public NavMeshAgent agent;
-    GameObject player;
+    public GameObject player;
+    float lifeTime=30;
 
     private void Start()
     {
@@ -20,13 +22,16 @@ public class NpcController : MonoBehaviour
     private void Update()
     {
         agent.SetDestination(dir);
-
         SetDir();
+
+        if(player!= null)
+        CheckCollider();
+        Timer();
     }
 
     void SetDir()
     {
-        if (!isFollowing&&transform.position==dir)
+        if (!isFollowing && GetComponent<NavMeshAgent>().velocity == Vector3.zero)
         {
             GenerateDir();
         }
@@ -38,24 +43,49 @@ public class NpcController : MonoBehaviour
 
     void GenerateDir()
     {
-        dir = new Vector3(Random.Range(-50, 50), .5166669f, Random.Range(-50, 50));
-
-        Ray ray = new Ray(new Vector3(dir.x,10,dir.z), dir);
-        RaycastHit hit;
-
-        if(!Physics.Raycast(ray, out hit))
-        {
-            GenerateDir();
-        }
-        Debug.Log(dir);
+        dir = transform.position + Random.insideUnitSphere * Random.Range(10,40);
     }
 
     public void AddPlayer(GameObject _player)
     {
         isFollowing = true;
         player = _player;
-        gameObject.GetComponent<Renderer>().material.color = _player.GetComponent<Renderer>().material.color;
-        agent.stoppingDistance = 2+_player.GetComponent<PlayerMovement>().amount;
+        gameObject.GetComponentInChildren<Renderer>().material.color = _player.GetComponent<Renderer>().material.color;
+        agent.stoppingDistance = offset;
+        agent.speed = 6;
+    }
+
+    public void CheckCollider()
+    {
+        foreach (Collider col in Physics.OverlapSphere(transform.position, 2))
+        {
+            if (col.gameObject.tag == "Npc")
+            {
+                if (col.GetComponent<NpcController>().isFollowing)
+                {
+                    if (col.GetComponent<NpcController>().player.GetComponent<PlayerMovement>().amount < player.GetComponent<PlayerMovement>().amount)
+                    {
+                        col.GetComponent<NpcController>().AddPlayer(player);
+                        col.GetComponent<NpcController>().player.GetComponent<PlayerMovement>().AddAmount(-1);
+                        player.GetComponent<PlayerMovement>().AddAmount(1);
+                    }
+                }
+                else
+                {
+                    col.GetComponent<NpcController>().AddPlayer(player);
+                    player.GetComponent<PlayerMovement>().AddAmount(1);
+                }
+            }
+        }
+    }
+
+    void Timer()
+    {
+        lifeTime -= Time.deltaTime;
+        if (lifeTime <= 0&&!isFollowing)
+        {
+            Destroy(gameObject);
+        }
     }
 
 }
