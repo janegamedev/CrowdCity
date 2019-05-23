@@ -1,40 +1,47 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerAI : MonoBehaviour
 {
     public int amount;
-
     public float speed;
-    
-    CharacterController controller;
-    Vector3 moveDir = Vector3.zero;
 
-    
+    CharacterController controller;
+    Vector3 dir = Vector3.zero;
+
+    public NavMeshAgent agent;
+
     private void Start()
     {
         amount = 1;
         gameObject.GetComponentInChildren<Renderer>().material.color = Random.ColorHSV();
-        controller = GetComponent<CharacterController>();
     }
 
     private void Update()
     {
-        moveDir = new Vector3(Input.GetAxis("Horizontal"), 0.0f, Input.GetAxis("Vertical")).normalized;
-        moveDir *= speed;
-
-        controller.Move(moveDir * Time.deltaTime);
-
-        if (moveDir!= Vector3.zero)
-            transform.rotation = Quaternion.LookRotation(moveDir);
-
+        agent.SetDestination(dir);
+        SetDir();
         CheckCollider();
+    }
+
+    void SetDir()
+    {
+        if (agent.velocity == Vector3.zero)
+        {
+            GenerateDir();
+        }
+    }
+
+    void GenerateDir()
+    {
+        dir = transform.position + Random.insideUnitSphere * Random.Range(10, 40);
     }
 
     public void AddAmount(int number)
     {
-        amount+=number;
+        amount += number;
     }
 
     public void CheckCollider()
@@ -43,7 +50,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (col.gameObject.tag == "Npc")
             {
-                if (col.GetComponent<NpcController>().isFollowing&& col.GetComponent<NpcController>().player != gameObject)
+                if (col.GetComponent<NpcController>().isFollowing && col.GetComponent<NpcController>().player != gameObject)
                 {
                     if (col.GetComponent<NpcController>().player.GetComponent<PlayerMovement>().amount < amount)
                     {

@@ -12,6 +12,7 @@ public class NpcController : MonoBehaviour
     public NavMeshAgent agent;
     public GameObject player;
     float lifeTime=30;
+    float timer;
 
     private void Start()
     {
@@ -24,16 +25,25 @@ public class NpcController : MonoBehaviour
         agent.SetDestination(dir);
         SetDir();
 
-        if(player!= null)
-        CheckCollider();
+        if (isFollowing && timer > 1)
+        {
+            CheckCollider();
+            timer = 0;
+        }
+        else
+        {
+            timer += Time.deltaTime;
+        }
+
+
         Timer();
     }
 
     void SetDir()
     {
-        if (!isFollowing && GetComponent<NavMeshAgent>().velocity == Vector3.zero)
+        if (!isFollowing && agent.velocity == Vector3.zero)
         {
-            GenerateDir();
+            dir = transform.position + Random.insideUnitSphere * Random.Range(10, 40);
         }
         else if(isFollowing)
         {
@@ -41,40 +51,26 @@ public class NpcController : MonoBehaviour
         }
     }
 
-    void GenerateDir()
-    {
-        dir = transform.position + Random.insideUnitSphere * Random.Range(10,40);
-    }
-
     public void AddPlayer(GameObject _player)
     {
         isFollowing = true;
         player = _player;
-        gameObject.GetComponentInChildren<Renderer>().material.color = _player.GetComponent<Renderer>().material.color;
+        gameObject.GetComponentInChildren<Renderer>().material.color = _player.GetComponentInChildren<Renderer>().material.color;
         agent.stoppingDistance = offset;
-        agent.speed = 6;
+        agent.speed = 8;
     }
 
     public void CheckCollider()
     {
         foreach (Collider col in Physics.OverlapSphere(transform.position, 2))
         {
-            if (col.gameObject.tag == "Npc")
+            if (col.gameObject.tag == "Npc" && col.gameObject.GetComponent<NpcController>().player!=player)
             {
-                if (col.GetComponent<NpcController>().isFollowing)
-                {
-                    if (col.GetComponent<NpcController>().player.GetComponent<PlayerMovement>().amount < player.GetComponent<PlayerMovement>().amount)
-                    {
-                        col.GetComponent<NpcController>().AddPlayer(player);
-                        col.GetComponent<NpcController>().player.GetComponent<PlayerMovement>().AddAmount(-1);
-                        player.GetComponent<PlayerMovement>().AddAmount(1);
-                    }
-                }
-                else
-                {
-                    col.GetComponent<NpcController>().AddPlayer(player);
-                    player.GetComponent<PlayerMovement>().AddAmount(1);
-                }
+                player.GetComponent<Agent>().AddNpc(col.gameObject);
+            }
+            else if (col.gameObject.tag == "Player"&&col.GetComponent<Agent>().amount<player.GetComponent<Agent>().amount)
+            {
+                player.GetComponent<Agent>().KillPlayer(col.gameObject);
             }
         }
     }
@@ -87,5 +83,4 @@ public class NpcController : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
 }
