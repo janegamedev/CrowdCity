@@ -11,13 +11,11 @@ public class NpcController : MonoBehaviour
     Vector3 dir;
     public NavMeshAgent agent;
     public GameObject player;
-    float lifeTime;
+    float lifeTime=30;
     float timer;
-
 
     private void Start()
     {
-        lifeTime = Random.Range(20, 40);
         dir = transform.position;
         SetDir();
     }
@@ -47,7 +45,7 @@ public class NpcController : MonoBehaviour
         {
             dir = transform.position + Random.insideUnitSphere * Random.Range(10, 40);
         }
-        else if (isFollowing)
+        else if(isFollowing)
         {
             dir = player.transform.position;
         }
@@ -55,11 +53,9 @@ public class NpcController : MonoBehaviour
 
     public void AddPlayer(GameObject _player)
     {
-        GameManager.GM.RemoveNpcFromArray(gameObject);
         isFollowing = true;
         player = _player;
-        gameObject.GetComponentInChildren<Renderer>().material.SetColor("_Color", _player.GetComponentInChildren<Renderer>().material.color);
-        gameObject.GetComponentInChildren<Renderer>().material.SetColor("_OutlineColor", _player.GetComponentInChildren<Renderer>().material.color);
+        gameObject.GetComponentInChildren<Renderer>().material.color = _player.GetComponentInChildren<Renderer>().material.color;
         agent.stoppingDistance = offset;
         agent.speed = 8;
     }
@@ -68,11 +64,11 @@ public class NpcController : MonoBehaviour
     {
         foreach (Collider col in Physics.OverlapSphere(transform.position, 2))
         {
-            if (col.gameObject.tag == "Npc" && col.gameObject.GetComponent<NpcController>().player != player)
+            if (col.gameObject.tag == "Npc" && col.gameObject.GetComponent<NpcController>().player!=player)
             {
                 player.GetComponent<Agent>().AddNpc(col.gameObject);
             }
-            else if (col.gameObject.tag == "Player" && col.GetComponent<Agent>().amount < player.GetComponent<Agent>().amount)
+            else if (col.gameObject.tag == "Player"&&col.GetComponent<Agent>().amount<player.GetComponent<Agent>().amount)
             {
                 player.GetComponent<Agent>().KillPlayer(col.gameObject);
             }
@@ -82,9 +78,8 @@ public class NpcController : MonoBehaviour
     void Timer()
     {
         lifeTime -= Time.deltaTime;
-        if (lifeTime <= 0 && !isFollowing)
+        if (lifeTime <= 0&&!isFollowing)
         {
-            GameManager.GM.RemoveNpcFromArray(gameObject);
             Destroy(gameObject);
         }
     }

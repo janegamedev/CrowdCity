@@ -8,7 +8,6 @@ public class Agent : MonoBehaviour
     public bool isAi;
     public int amount;
     Vector3 moveDir = Vector3.zero;
-    Color color;
 
     //for player
     public float speed;
@@ -20,14 +19,7 @@ public class Agent : MonoBehaviour
     private void Start()
     {
         amount = 1;
-
-        color = Random.ColorHSV();
-        color.a = .4f;
-
-
-        gameObject.GetComponentInChildren<Renderer>().material.SetColor("_Color", color);
-        gameObject.GetComponentInChildren<Renderer>().material.SetColor("_OutlineColor", color);
-
+        gameObject.GetComponentInChildren<Renderer>().material.color = Random.ColorHSV();
         if (!isAi)
         {
             controller = GetComponent<CharacterController>();
@@ -76,11 +68,11 @@ public class Agent : MonoBehaviour
     {
         foreach (Collider col in Physics.OverlapSphere(transform.position, 2))
         {
-            if (col.gameObject.tag == "Npc" && col.GetComponent<NpcController>().player != gameObject)
+            if (col.gameObject.tag == "Npc"&& col.GetComponent<NpcController>().player != gameObject)
             {
                 AddNpc(col.gameObject);
             }
-            else if (col.gameObject.tag == "Player" && col.GetComponent<Agent>().amount < amount)
+            else if (col.gameObject.tag == "Player"&& col.GetComponent<Agent>().amount<amount)
             {
                 KillPlayer(col.gameObject);
             }
@@ -94,7 +86,7 @@ public class Agent : MonoBehaviour
             npc.GetComponent<NpcController>().AddPlayer(gameObject);
             AddAmount(1);
         }
-        else if (npc.GetComponent<NpcController>().isFollowing && npc.GetComponent<NpcController>().player != gameObject)
+        else if(npc.GetComponent<NpcController>().isFollowing&&npc.GetComponent<NpcController>().player != gameObject)
         {
             if (npc.GetComponent<NpcController>().player.GetComponent<Agent>().amount < amount)
             {
@@ -111,7 +103,7 @@ public class Agent : MonoBehaviour
         {
             GameManager.GM.DestroyPlayer(player);
             Debug.Log("Player was killed");
-            GameManager.GM.SpawnFollowers(gameObject);
+            //spawn 10 npc and add 10 
         }
     }
 }
