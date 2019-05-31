@@ -21,9 +21,9 @@ public class Agent : MonoBehaviour
     {
         amount = 1;
 
+        //Set color
         color = Random.ColorHSV();
         color.a = .4f;
-
 
         gameObject.GetComponentInChildren<Renderer>().material.SetColor("_Color", color);
         gameObject.GetComponentInChildren<Renderer>().material.SetColor("_OutlineColor", color);
@@ -89,17 +89,18 @@ public class Agent : MonoBehaviour
 
     public void AddNpc(GameObject npc)
     {
-        if (!npc.GetComponent<NpcController>().isFollowing)
+        NpcController npcCont = npc.GetComponent<NpcController>();
+        if (!npcCont.isFollowing)
         {
-            npc.GetComponent<NpcController>().AddPlayer(gameObject);
+            npcCont.AddPlayer(gameObject);
             AddAmount(1);
         }
-        else if (npc.GetComponent<NpcController>().isFollowing && npc.GetComponent<NpcController>().player != gameObject)
+        else if (npcCont.isFollowing && npcCont.player != gameObject)
         {
-            if (npc.GetComponent<NpcController>().player.GetComponent<Agent>().amount < amount)
+            if (npcCont.player.GetComponent<Agent>().amount < amount)
             {
-                npc.GetComponent<NpcController>().player.GetComponent<Agent>().AddAmount(-1);
-                npc.GetComponent<NpcController>().AddPlayer(gameObject);
+                npcCont.player.GetComponent<Agent>().AddAmount(-1);
+                npcCont.AddPlayer(gameObject);
                 AddAmount(1);
             }
         }
