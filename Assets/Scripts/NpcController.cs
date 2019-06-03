@@ -5,58 +5,53 @@ using UnityEngine.AI;
 
 public class NpcController : MonoBehaviour
 {
-    public bool isFollowing;  //Check if npc is following player or just wondering
+
+    public enum State {Wondering, Following, Dead};
+
+    public State currentState;
+
 
     int offset = 3;
     Vector3 dir;
     public NavMeshAgent agent;
     public GameObject player;
-    float lifeTime;
+
     float timer;
 
 
     private void Start()
     {
-        lifeTime = Random.Range(20, 40);
         dir = transform.position;
-        SetDir();
     }
 
     private void Update()
     {
+        switch (currentState)
+        {
+            case State.Wondering: 
+                if(agent.velocity == Vector3.zero)
+                {
+                    dir = transform.position + Random.insideUnitSphere * Random.Range(10, 40);
+                }
+                break;
+            case State.Following:
+                dir = player.transform.position;
+                CheckCollider();
+                break;
+        }
+
         agent.SetDestination(dir);
-        SetDir();
-
-        if (isFollowing && timer > 1)
-        {
-            CheckCollider();
-            timer = 0;
-        }
-        else
-        {
-            timer += Time.deltaTime;
-        }
-
-
-        Timer();
     }
 
-    void SetDir()
-    {
-        if (!isFollowing && agent.velocity == Vector3.zero)
-        {
-            dir = transform.position + Random.insideUnitSphere * Random.Range(10, 40);
-        }
-        else if (isFollowing)
-        {
-            dir = player.transform.position;
-        }
-    }
 
     public void AddPlayer(GameObject _player)
     {
-        GameManager.GM.RemoveNpcFromArray(gameObject);
-        isFollowing = true;
+        if (currentState == State.Wondering)
+        {
+            GameManager.GM.RemoveNpcFromArray(gameObject);
+        }
+
+        currentState = State.Following;
         player = _player;
         gameObject.GetComponentInChildren<Renderer>().material.SetColor("_Color", _player.GetComponentInChildren<Renderer>().material.color);
         gameObject.GetComponentInChildren<Renderer>().material.SetColor("_OutlineColor", _player.GetComponentInChildren<Renderer>().material.color);
@@ -66,26 +61,23 @@ public class NpcController : MonoBehaviour
 
     public void CheckCollider()
     {
-        foreach (Collider col in Physics.OverlapSphere(transform.position, 2))
+        if (timer>=2)
         {
-            if (col.gameObject.tag == "Npc" && col.gameObject.GetComponent<NpcController>().player != player)
+            foreach (Collider col in Physics.OverlapSphere(transform.position, 2))
             {
-                player.GetComponent<Agent>().AddNpc(col.gameObject);
-            }
-            else if (col.gameObject.tag == "Player" && col.GetComponent<Agent>().amount < player.GetComponent<Agent>().amount)
-            {
-                player.GetComponent<Agent>().KillPlayer(col.gameObject);
+                if (col.gameObject.tag == "Npc" && col.gameObject.GetComponent<NpcController>().player != player)
+                {
+                    player.GetComponent<Agent>().AddNpc(col.gameObject);
+                    timer = 0;
+                }
+                else if (col.gameObject.tag == "Player" && col.GetComponent<Agent>().amount < player.GetComponent<Agent>().amount)
+                {
+                    player.GetComponent<Agent>().KillPlayer(col.gameObject);
+                    timer = 0;
+                }
             }
         }
-    }
 
-    void Timer()
-    {
-        lifeTime -= Time.deltaTime;
-        if (lifeTime <= 0 && !isFollowing)
-        {
-            GameManager.GM.RemoveNpcFromArray(gameObject);
-            Destroy(gameObject);
-        }
+        timer += Time.deltaTime;
     }
 }

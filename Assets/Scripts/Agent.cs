@@ -8,7 +8,7 @@ public class Agent : MonoBehaviour
     public bool isAi;
     public int amount;
     Vector3 moveDir = Vector3.zero;
-    Color color;
+    public Color color;
 
     //for player
     public float speed;
@@ -22,7 +22,7 @@ public class Agent : MonoBehaviour
         amount = 1;
 
         //Set color
-        color = Random.ColorHSV();
+        //color = Random.ColorHSV();
         color.a = .4f;
 
         gameObject.GetComponentInChildren<Renderer>().material.SetColor("_Color", color);
@@ -70,6 +70,7 @@ public class Agent : MonoBehaviour
     public void AddAmount(int number)
     {
         amount += number;
+        GameManager.GM.UpdateStat();
     }
 
     public void CheckCollider()
@@ -89,18 +90,19 @@ public class Agent : MonoBehaviour
 
     public void AddNpc(GameObject npc)
     {
-        NpcController npcCont = npc.GetComponent<NpcController>();
-        if (!npcCont.isFollowing)
+        NpcController npcController = npc.GetComponent<NpcController>();
+
+        if (npcController.currentState == NpcController.State.Wondering)
         {
-            npcCont.AddPlayer(gameObject);
+            npcController.AddPlayer(gameObject);
             AddAmount(1);
         }
-        else if (npcCont.isFollowing && npcCont.player != gameObject)
+        else if (npcController.currentState == NpcController.State.Following && npcController.player != gameObject)
         {
-            if (npcCont.player.GetComponent<Agent>().amount < amount)
+            if (npcController.player.GetComponent<Agent>().amount < amount)
             {
-                npcCont.player.GetComponent<Agent>().AddAmount(-1);
-                npcCont.AddPlayer(gameObject);
+                npcController.player.GetComponent<Agent>().AddAmount(-1);
+                npcController.AddPlayer(gameObject);
                 AddAmount(1);
             }
         }
@@ -111,7 +113,6 @@ public class Agent : MonoBehaviour
         if (player.GetComponent<Agent>().amount == 1)
         {
             GameManager.GM.DestroyPlayer(player);
-            Debug.Log("Player was killed");
             GameManager.GM.SpawnFollowers(gameObject);
         }
     }
