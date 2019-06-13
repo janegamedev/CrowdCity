@@ -46,11 +46,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 7946091941609479584}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_GeneratorAsset: {fileID: 0}
   m_Script: {fileID: 11500000, guid: 9b554a607709a16459cc28a2fc60d7b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isFollowing: 0
+  currentState: 0
+  offset: 1
   agent: {fileID: 7946091941609479594}
   player: {fileID: 0}
 --- !u!195 &7946091941609479594
@@ -67,7 +67,7 @@ NavMeshAgent:
   m_Acceleration: 15
   avoidancePriority: 50
   m_AngularSpeed: 180
-  m_StoppingDistance: 3
+  m_StoppingDistance: 1
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -133,7 +133,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 7946091941609479584}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_GeneratorAsset: {fileID: 0}
   m_Script: {fileID: 11500000, guid: e076d1f81d928c64d99d46260b3b112c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

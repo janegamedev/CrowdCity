@@ -20,9 +20,6 @@ public class Agent : MonoBehaviour
     private void Start()
     {
         amount = 1;
-
-        //Set color
-        //color = Random.ColorHSV();
         color.a = .4f;
 
         gameObject.GetComponentInChildren<Renderer>().material.SetColor("_Color", color);
@@ -70,14 +67,13 @@ public class Agent : MonoBehaviour
     public void AddAmount(int number)
     {
         amount += number;
-        GameManager.GM.UpdateStat();
     }
 
     public void CheckCollider()
     {
         foreach (Collider col in Physics.OverlapSphere(transform.position, 2))
         {
-            if (col.gameObject.tag == "Npc" && col.GetComponent<NpcController>().player != gameObject)
+            if (col.gameObject.tag == "Npc" && col.GetComponent<NpcAgent>().player != gameObject)
             {
                 AddNpc(col.gameObject);
             }
@@ -90,19 +86,21 @@ public class Agent : MonoBehaviour
 
     public void AddNpc(GameObject npc)
     {
-        NpcController npcController = npc.GetComponent<NpcController>();
+        NpcAgent npcController = npc.GetComponent<NpcAgent>();
 
-        if (npcController.currentState == NpcController.State.Wondering)
+        if (npcController.currentState == NpcAgent.State.Wondering)
         {
             npcController.AddPlayer(gameObject);
+            npcController.offset = npcController.offset * Mathf.RoundToInt(amount/5);
             AddAmount(1);
         }
-        else if (npcController.currentState == NpcController.State.Following && npcController.player != gameObject)
+        else if (npcController.currentState == NpcAgent.State.Following && npcController.player != gameObject)
         {
             if (npcController.player.GetComponent<Agent>().amount < amount)
             {
                 npcController.player.GetComponent<Agent>().AddAmount(-1);
                 npcController.AddPlayer(gameObject);
+                npcController.offset = npcController.offset * Mathf.RoundToInt(amount / 5);
                 AddAmount(1);
             }
         }

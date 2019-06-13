@@ -11,13 +11,13 @@ public class GameManager : MonoBehaviour
     public List<Color> colors = new List<Color>();
 
     float timer;
-
-    public GameObject npc;
-    public GameObject player;
-    public GameObject playerAi;
-    public GameObject stat;
-    public GameObject point;
     public TextMeshProUGUI timerUI;
+
+    public NpcAgent npcPrefab;
+    public Agent playerPrefab;
+    public Agent playerAiPrefab;
+    public GameObject statPrefab;
+    public GameObject pointPrefab;
  
     public GameObject buildingsRoot;
     public GameObject playersRoot;
@@ -28,7 +28,6 @@ public class GameManager : MonoBehaviour
     public Camera cam;
 
     public List<GameObject> players;
-    public List<GameObject> statistics;
     public List<GameObject> playersSpawnPos;
     public List<GameObject> npcWalker;
     public List<GameObject> points;
@@ -79,8 +78,8 @@ public class GameManager : MonoBehaviour
         if (NavMesh.SamplePosition(temp, out hit, 50.0f, NavMesh.AllAreas))
         {
             Vector3 pos = hit.position;
-            GameObject go = Instantiate(npc, pos, Quaternion.identity, npcRoot.transform);
-            npcWalker.Add(go);
+            NpcAgent go = Instantiate(npcPrefab, pos, Quaternion.identity, npcRoot.transform);
+            npcWalker.Add(go.gameObject);
         }
         else
         {
@@ -101,9 +100,9 @@ public class GameManager : MonoBehaviour
             {
                 Vector3 pos = hit.position;
 
-                GameObject go = Instantiate(npc, pos, Quaternion.identity, npcRoot.transform);
-                go.GetComponent<NpcController>().currentState = NpcController.State.Following;
-                go.GetComponent<NpcController>().AddPlayer(_player);
+                NpcAgent go = Instantiate(npcPrefab, pos, Quaternion.identity, npcRoot.transform);
+                go.currentState = NpcAgent.State.Following;
+                go.AddPlayer(_player);
             }
             else
             {
@@ -121,53 +120,26 @@ public class GameManager : MonoBehaviour
         {
             if (i == 0)
             {
-                GameObject go = Instantiate(player, playersSpawnPos[i].transform.position, Quaternion.identity, playersRoot.transform);
-                cam.GetComponent<CameraFollow>().player = go;
-                players.Add(go);
+                Agent player = Instantiate(playerPrefab, playersSpawnPos[i].transform.position, Quaternion.identity, playersRoot.transform);
+                cam.GetComponent<CameraFollow>().player = player.gameObject;
+                player.color = colors[i];
+                players.Add(player.gameObject);
 
-                GameObject go2 = Instantiate(point, pointsRoot.transform, false);
-                go2.GetComponent<PointUpdate>().player = go;
-                points.Add(go2);
+                GameObject point = Instantiate(pointPrefab, pointsRoot.transform, false);
+                point.GetComponent<PointUpdate>().player = player.gameObject;
+                points.Add(point);
             }
             else
             {
-                GameObject go = Instantiate(playerAi, playersSpawnPos[i].transform.position, Quaternion.identity, playersRoot.transform);
-                players.Add(go);
+                Agent ai = Instantiate(playerAiPrefab, playersSpawnPos[i].transform.position, Quaternion.identity, playersRoot.transform);
+                ai.color = colors[i];
+                players.Add(ai.gameObject);
 
-                GameObject go2 = Instantiate(point, pointsRoot.transform, false);
-                go2.GetComponent<PointUpdate>().player = go;
-                points.Add(go2);
+                GameObject point = Instantiate(pointPrefab, pointsRoot.transform, false);
+                point.GetComponent<PointUpdate>().player = ai.gameObject;
+                points.Add(point);
             }
-            players[i].GetComponent<Agent>().color = colors[i];
-            
         }
-        SpawnStatistic();
-    }
-
-    void SpawnStatistic()
-    {
-        for (int i = 0; i < players.Count; i++)
-        {
-            GameObject go = Instantiate(stat, statRoot.transform);
-            statistics.Add(go);
-        }
-    }
-
-    public void UpdateStat()
-    {
-        SortArray();
-        for (int i = 0; i < statistics.Count; i++)
-        {
-            Color temp = players[i].GetComponentInChildren<Renderer>().material.color;
-            statistics[i].GetComponentInChildren<RawImage>().color = new Color(temp.r,temp.g,temp.b,1);
-            statistics[i].GetComponentInChildren<TextMeshProUGUI>().text = players[i].GetComponent<Agent>().amount.ToString();
-        }
-    }
-
-    void SortArray()
-    {
-        players = players.OrderBy(x => x.GetComponent<Agent>().amount).ToList();
-        players.Reverse();
     }
 
     public void RemoveNpcFromArray(GameObject _npc)
@@ -178,14 +150,12 @@ public class GameManager : MonoBehaviour
     public void DestroyPlayer(GameObject _player)
     {
         int temp = players.IndexOf(_player);
+        Destroy(_player.gameObject);
+        players.RemoveAt(temp);
 
         Destroy(points[temp].gameObject);
-        Destroy(statistics[temp].gameObject);
-        Destroy(_player.gameObject);
-        statistics.RemoveAt(temp);
-        players.RemoveAt(temp);
+
         points.RemoveAt(temp);
-        
     }
 
     public void GameOver()
@@ -195,12 +165,6 @@ public class GameManager : MonoBehaviour
             Destroy(child.gameObject);
         }
         players.Clear();
-
-        foreach (Transform child in statRoot.transform)
-        {
-            Destroy(child.gameObject);
-        }
-        statistics.Clear();
 
         foreach (Transform child in npcRoot.transform)
         {

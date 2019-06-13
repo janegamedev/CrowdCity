@@ -9419,13 +9419,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   colors: []
-  npc: {fileID: 7946091941609479584, guid: 04ecb5e8a2b654945ab0d927c6a0b33c, type: 3}
-  player: {fileID: 5595181780783745528, guid: 8da06e5363f62cf48a00e81211bc23d8, type: 3}
-  playerAi: {fileID: 6023091050292605342, guid: b3e710d8a9e85cc4fb10e9ffe27cef1d,
-    type: 3}
-  stat: {fileID: 3212136245329238159, guid: d03c7f567eab25447889b1ed3bc9a404, type: 3}
-  point: {fileID: 5865765853132581046, guid: 59b1a0753dc2d6347a3e379a61f70ce7, type: 3}
   timerUI: {fileID: 1948482442}
+  npcPrefab: {fileID: 7946091941609479585, guid: 04ecb5e8a2b654945ab0d927c6a0b33c,
+    type: 3}
+  playerPrefab: {fileID: 775701801457645671, guid: 8da06e5363f62cf48a00e81211bc23d8,
+    type: 3}
+  playerAiPrefab: {fileID: 3349565781907025254, guid: b3e710d8a9e85cc4fb10e9ffe27cef1d,
+    type: 3}
+  statPrefab: {fileID: 3212136245329238159, guid: d03c7f567eab25447889b1ed3bc9a404,
+    type: 3}
+  pointPrefab: {fileID: 5865765853132581046, guid: 59b1a0753dc2d6347a3e379a61f70ce7,
+    type: 3}
   buildingsRoot: {fileID: 114618450}
   playersRoot: {fileID: 263240133}
   npcRoot: {fileID: 1649234441}
@@ -9433,7 +9437,6 @@ MonoBehaviour:
   pointsRoot: {fileID: 1256317747}
   cam: {fileID: 534669904}
   players: []
-  statistics: []
   playersSpawnPos:
   - {fileID: 1121122230}
   - {fileID: 872840426}

@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class NpcController : MonoBehaviour
+public class NpcAgent : MonoBehaviour
 {
 
-    public enum State {Wondering, Following, Dead};
+    public enum State {Wondering, Following};
 
     public State currentState;
 
-
-    int offset = 3;
     Vector3 dir;
+    public int offset = 1;
+
     public NavMeshAgent agent;
+
     public GameObject player;
 
     float timer;
-
 
     private void Start()
     {
@@ -35,7 +35,7 @@ public class NpcController : MonoBehaviour
                 }
                 break;
             case State.Following:
-                dir = player.transform.position;
+                dir = player.transform.position + (Vector3)Random.insideUnitCircle;
                 CheckCollider();
                 break;
         }
@@ -56,16 +56,16 @@ public class NpcController : MonoBehaviour
         gameObject.GetComponentInChildren<Renderer>().material.SetColor("_Color", _player.GetComponentInChildren<Renderer>().material.color);
         gameObject.GetComponentInChildren<Renderer>().material.SetColor("_OutlineColor", _player.GetComponentInChildren<Renderer>().material.color);
         agent.stoppingDistance = offset;
-        agent.speed = 8;
+        agent.speed = 12;
     }
 
     public void CheckCollider()
     {
         if (timer>=2)
         {
-            foreach (Collider col in Physics.OverlapSphere(transform.position, 2))
+            foreach (Collider col in Physics.OverlapSphere(transform.position, 1))
             {
-                if (col.gameObject.tag == "Npc" && col.gameObject.GetComponent<NpcController>().player != player)
+                if (col.gameObject.tag == "Npc" && col.gameObject.GetComponent<NpcAgent>().player != player)
                 {
                     player.GetComponent<Agent>().AddNpc(col.gameObject);
                     timer = 0;
