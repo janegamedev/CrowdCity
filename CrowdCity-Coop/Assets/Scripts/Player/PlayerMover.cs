@@ -18,7 +18,7 @@ namespace Player
 
         private Vector3 _moveDirection;
         private Vector2 _moveInput;
-        
+
         public void SetInputVector(Vector2 input)
         {
             _moveInput = input;

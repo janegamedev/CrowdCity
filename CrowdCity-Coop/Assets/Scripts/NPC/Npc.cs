@@ -81,16 +81,27 @@ public class Npc : MonoBehaviour
         {
             if (col.TryGetComponent(out Npc npc))
             {
-                if(npc.IsWalker || npc.Leader != npc._leader && npc.Leader.Followers < Leader.Followers)
+                if(npc.IsWalker)
+                {
                     Leader.AddFollower(npc);
+                }
+                else
+                {
+                    if(Leader == npc.Leader || npc.Leader.Followers == Leader.Followers) continue;
                     
-                continue;
+                    if(npc.Leader.Followers < Leader.Followers)
+                        Leader.AddFollower(npc);
+                    else
+                        npc.Leader.AddFollower(this);
+                }
             }
                 
             if (col.TryGetComponent(out Leader leader))
             {
                 if(leader.Followers == 1)
-                    _leader.KillPlayer(leader);
+                    Leader.KillPlayer(leader);
+                else
+                    leader.AddFollower(this);
             }
         }
     }

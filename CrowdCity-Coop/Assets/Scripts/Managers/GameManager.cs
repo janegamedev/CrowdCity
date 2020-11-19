@@ -5,6 +5,7 @@ using DefaultNamespace;
 using Player;
 using Scriptables;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
@@ -13,32 +14,49 @@ public class GameManager : MonoBehaviour
     
     public List<Transform> spawnSpots = new List<Transform>();
     private List<Leader> _leaders = new List<Leader>();
-    private List<Color> _leaderColors = new List<Color>();
-  
+
+    private PlayerInputManager _inputManager;
+    
     public void Awake()
     {
         GameResources.gm = this;
-
-        _leaderColors = settings.leaderColors.ToList();
-        Debug.Log(_leaderColors.Count);
+        _inputManager = FindObjectOfType<PlayerInputManager>();
+        
         SpawnLeaders();
     }
     
     private void SpawnLeaders()
     {
+        for (var i = 0; i < settings.players.Length; i++)
+        {
+            PlayerSetting player = settings.players[i];
+            Leader p = SpawnLeader(settings.playerPrefab, player.Color);
+            
+            PlayerMover mover = p.GetComponent<PlayerMover>();
+            mover.PlayerIndex = i;
+        }
+
         while (_leaders.Count < settings.maxAmountOfPlayers)
         {
-            Transform random = spawnSpots[Random.Range(0, spawnSpots.Count)];
+            var c = settings.RandomColorTable();
+            c.taken = true;
 
-            Leader l = Instantiate(settings.playerPrefab, random.position, Quaternion.identity, transform).GetComponent<Leader>();
-            Color c = _leaderColors[Random.Range(0,_leaderColors.Count)];
-            l.SetLeader(c);
-
-            _leaderColors.Remove(c);
-            _leaders.Add(l);
-
-            spawnSpots.Remove(random);
+            SpawnLeader(settings.aiPrefab, c.color);
         }
+    }
+    
+    
+
+    private Leader SpawnLeader(GameObject prefab, Color c)
+    {
+        Transform random = spawnSpots[Random.Range(0, spawnSpots.Count)];
+        spawnSpots.Remove(random);
+        
+        Leader l = Instantiate(prefab, random.position, Quaternion.identity, transform).GetComponent<Leader>();
+        l.SetLeader(c);
+        _leaders.Add(l);
+        
+        return l;
     }
 
     public void DestroyLeader(Leader l)

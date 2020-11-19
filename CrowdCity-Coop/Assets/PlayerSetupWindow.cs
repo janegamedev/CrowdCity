@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Scriptables;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerSetupWindow : Window
 {
@@ -45,6 +46,6 @@ public class PlayerSetupWindow : Window
     
     public void OnPlayPress()
     {
-       Debug.Log("PLAY!");
+        SceneManager.LoadScene("SampleScene");
     }
 }

@@ -13,7 +13,7 @@ namespace Scriptables
         public Vector2 xSize, zSize;
         
         public int maxAmountOfPlayers;
-        public GameObject playerPrefab, npcPrefab;
+        public GameObject playerPrefab, aiPrefab, npcPrefab;
         public List<Color> leaderColors;
         
         public int startAmountOfNpc, maxAmountOfNpc;
@@ -23,6 +23,13 @@ namespace Scriptables
         [NonSerialized] public ColorBool[] ColorTable;
         
         public ColorBool FirstAvailableColorBool => ColorTable.First(x => !x.taken);
+
+        public ColorBool RandomColorTable()
+        {
+            ColorBool[] available = ColorTable.Where(x => !x.taken).ToArray();
+
+            return available[Random.Range(0, available.Length)];
+        }
 
         public int NextAvailableIndex(int i)
         {
