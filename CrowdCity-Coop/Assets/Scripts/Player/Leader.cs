@@ -1,4 +1,5 @@
 ﻿using System;
+using Scriptables;
 using UnityEngine;
 
 namespace Player
@@ -8,6 +9,7 @@ namespace Player
         public LayerMask layerMask;
         private int _followers = 1;
         private Color _leaderColor;
+        private PlayerSetting _playerSetting;
 
         public int Followers
         {
@@ -16,6 +18,8 @@ namespace Player
         }
 
         public Color LeaderColor => _leaderColor;
+        public int LeaderboardPlace { get; set; }
+        public PlayerSetting PlayerSettings => _playerSetting;
 
         public void SetLeader(Color c)
         {

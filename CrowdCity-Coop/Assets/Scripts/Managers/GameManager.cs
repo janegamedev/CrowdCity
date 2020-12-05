@@ -11,6 +11,7 @@ using Random = UnityEngine.Random;
 public class GameManager : MonoBehaviour
 {
     public GameSettings settings;
+    public PlayerInputManager inputManager;
     
     public List<Transform> spawnSpots = new List<Transform>();
     private List<Leader> _leaders = new List<Leader>();
@@ -27,14 +28,15 @@ public class GameManager : MonoBehaviour
     
     private void SpawnLeaders()
     {
-        for (var i = 0; i < settings.players.Count; i++)
+        /*for (var i = 0; i < settings.players.Count; i++)
         {
             PlayerSetting player = settings.players[i];
             Leader p = SpawnLeader(settings.playerPrefab, player.color);
+            inputManager.JoinPlayer(i, i, "Player", player.devices.ToArray());
             
             PlayerMover mover = p.GetComponent<PlayerMover>();
             mover.PlayerIndex = i;
-        }
+        }*/
 
         while (_leaders.Count < settings.maxAmountOfPlayers)
         {
@@ -46,7 +48,6 @@ public class GameManager : MonoBehaviour
     }
     
     
-
     private Leader SpawnLeader(GameObject prefab, Color c)
     {
         Transform random = spawnSpots[Random.Range(0, spawnSpots.Count)];

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Player;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
 using Random = UnityEngine.Random;
 
 namespace Scriptables
@@ -34,6 +36,9 @@ namespace Scriptables
         {
             CustomItem<Color>[] available = colorItems.Where(x => !x.taken).ToArray();
 
+            if (available.Length == 0)
+                return null;
+            
             return available[Random.Range(0, available.Length)];
         }
         
@@ -130,5 +135,7 @@ namespace Scriptables
     {
         public string nickname;
         public Color color;
+        public string mapScheme;
+        public ReadOnlyArray<InputDevice> devices;
     }
 }

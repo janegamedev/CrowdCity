@@ -749,6 +749,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings: {fileID: 11400000, guid: 74c3ceb4c73e03544805b5736bc664ed, type: 2}
+  inputManager: {fileID: 1003564872}
   spawnSpots:
   - {fileID: 121932147}
   - {fileID: 1021920239}
@@ -1443,9 +1444,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Multiplayer Input Manager
       objectReference: {fileID: 0}
+    - target: {fileID: 652206070779852107, guid: ead6fb4ba690b5c469e1ad93dcd23c66, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3106124620842864953, guid: ead6fb4ba690b5c469e1ad93dcd23c66, type: 3}
       propertyPath: m_PlayerJoinedEvent.m_PersistentCalls.m_Calls.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3106124620842864953, guid: ead6fb4ba690b5c469e1ad93dcd23c66, type: 3}
       propertyPath: m_PlayerLeftEvent.m_PersistentCalls.m_Calls.Array.size
@@ -1511,8 +1516,23 @@ PrefabInstance:
       propertyPath: m_PlayerLeftEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 3106124620842864953, guid: ead6fb4ba690b5c469e1ad93dcd23c66, type: 3}
+      propertyPath: m_PlayerJoinedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ead6fb4ba690b5c469e1ad93dcd23c66, type: 3}
+--- !u!114 &1003564872 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3106124620842864953, guid: ead6fb4ba690b5c469e1ad93dcd23c66, type: 3}
+  m_PrefabInstance: {fileID: 1003564871}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 621567455fd1c4ceb811cc8a00b6a1a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1017342008
 GameObject:
   m_ObjectHideFlags: 0
@@ -1588,7 +1608,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1061499889
 Transform:
   m_ObjectHideFlags: 0

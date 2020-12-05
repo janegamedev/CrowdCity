@@ -5,11 +5,11 @@ using Random = UnityEngine.Random;
 [CreateAssetMenu(menuName = "NPC/Follower State")]
 public class FollowerState : NpcState
 {
-    [NonSerialized] private float _leaderOffset;
-    
+    public float leaderOffset = 2;
+
     public override void Execute(Npc npc)
     {
-        Vector3 offset = new Vector3(Random.Range(-_leaderOffset, _leaderOffset), 0, Random.Range(-_leaderOffset, _leaderOffset));
+        Vector3 offset = new Vector3(Random.Range(-leaderOffset, leaderOffset), 0, Random.Range(-leaderOffset, leaderOffset));
         npc.Destination = npc.Leader.transform.position + offset;
         npc.CheckCollider();
     }
@@ -22,7 +22,7 @@ public class FollowerState : NpcState
     public override void OnNewLeader(Npc npc)
     {
         npc.Leader.Followers--;
-        npc.Agent.stoppingDistance = Mathf.RoundToInt(npc.Leader.Followers/2);
-        _leaderOffset = Mathf.RoundToInt(npc.Leader.Followers/5);
+        npc.Agent.autoBraking = true;
+        npc.Agent.stoppingDistance = 0.05f + (0.01f * npc.Leader.Followers);
     }
 }

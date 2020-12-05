@@ -125,6 +125,7 @@ public class PlayerInfo : MonoBehaviour
         _playerSetting = s;
         _currentColorIndex = 0;
         _input = input;
+        _playerSetting.devices = _input.devices;
 
         NicknameSubmitted = false;
 

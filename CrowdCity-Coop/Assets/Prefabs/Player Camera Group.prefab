@@ -47,6 +47,10 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 5342436463485401619}
+    - target: {fileID: 7592298697848586334, guid: e79109be9e0dee74e99014e2ce358857, type: 3}
+      propertyPath: m_DefaultControlScheme
+      value: Gamepad
+      objectReference: {fileID: 0}
     - target: {fileID: 7592298697848586335, guid: e79109be9e0dee74e99014e2ce358857, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -155,6 +159,26 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3153013342972191534, guid: 1af44c3546bcadc47bb4885af21089e2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3153013344425575181, guid: 1af44c3546bcadc47bb4885af21089e2, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6419960951673892256, guid: 1af44c3546bcadc47bb4885af21089e2, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -25
+      objectReference: {fileID: 0}
+    - target: {fileID: 6736366789103104195, guid: 1af44c3546bcadc47bb4885af21089e2, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6736366789103104195, guid: 1af44c3546bcadc47bb4885af21089e2, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6736366789103104195, guid: 1af44c3546bcadc47bb4885af21089e2, type: 3}
+      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
