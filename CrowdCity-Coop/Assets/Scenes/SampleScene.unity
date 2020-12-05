@@ -1448,6 +1448,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3106124620842864953, guid: ead6fb4ba690b5c469e1ad93dcd23c66, type: 3}
+      propertyPath: m_PlayerLeftEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3106124620842864953, guid: ead6fb4ba690b5c469e1ad93dcd23c66, type: 3}
       propertyPath: m_FixedNumberOfSplitScreens
       value: -1
       objectReference: {fileID: 0}
@@ -1499,6 +1503,14 @@ PrefabInstance:
       propertyPath: m_PlayerPrefab
       value: 
       objectReference: {fileID: 5342436463113229342, guid: b9ac00426f75f224e9c6aafce9da499d, type: 3}
+    - target: {fileID: 3106124620842864953, guid: ead6fb4ba690b5c469e1ad93dcd23c66, type: 3}
+      propertyPath: m_PlayerLeftEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3106124620842864953, guid: ead6fb4ba690b5c469e1ad93dcd23c66, type: 3}
+      propertyPath: m_PlayerLeftEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ead6fb4ba690b5c469e1ad93dcd23c66, type: 3}
 --- !u!1 &1017342008

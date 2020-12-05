@@ -15,7 +15,8 @@ MonoBehaviour:
   xSize: {x: -120, y: 120}
   zSize: {x: -120, y: 120}
   maxAmountOfPlayers: 12
-  playerPrefab: {fileID: 9058301030757904309, guid: 44f5dc85a40dd4b428744da9495901fd, type: 3}
+  playerPrefab: {fileID: 7708854441140396548, guid: 6f5a5f2fa0f0fa24c83e9c401d96a82c, type: 3}
+  aiPrefab: {fileID: 9058301030757904309, guid: 44f5dc85a40dd4b428744da9495901fd, type: 3}
   npcPrefab: {fileID: 6703038022324030995, guid: ad696f61b7944a3458ed4c56e44be41a, type: 3}
   leaderColors:
   - {r: 1, g: 0.7058824, b: 0, a: 1}

@@ -6,6 +6,7 @@ using Random = UnityEngine.Random;
 public class FollowerState : NpcState
 {
     [NonSerialized] private float _leaderOffset;
+    
     public override void Execute(Npc npc)
     {
         Vector3 offset = new Vector3(Random.Range(-_leaderOffset, _leaderOffset), 0, Random.Range(-_leaderOffset, _leaderOffset));

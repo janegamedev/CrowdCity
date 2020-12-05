@@ -27,10 +27,10 @@ public class GameManager : MonoBehaviour
     
     private void SpawnLeaders()
     {
-        for (var i = 0; i < settings.players.Length; i++)
+        for (var i = 0; i < settings.players.Count; i++)
         {
             PlayerSetting player = settings.players[i];
-            Leader p = SpawnLeader(settings.playerPrefab, player.Color);
+            Leader p = SpawnLeader(settings.playerPrefab, player.color);
             
             PlayerMover mover = p.GetComponent<PlayerMover>();
             mover.PlayerIndex = i;
@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
             var c = settings.RandomColorTable();
             c.taken = true;
 
-            SpawnLeader(settings.aiPrefab, c.color);
+            SpawnLeader(settings.aiPrefab, c.value);
         }
     }
     

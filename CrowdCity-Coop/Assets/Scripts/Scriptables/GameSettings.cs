@@ -15,31 +15,65 @@ namespace Scriptables
         public int maxAmountOfPlayers;
         public GameObject playerPrefab, aiPrefab, npcPrefab;
         public List<Color> leaderColors;
+        public List<string> leaderNames = new List<string>()
+        {
+            "Basher", "Cannonball", "Snowflake", "Jelly", "Genius", "Izzy", "Wheels", "Stretch", "Bird", "Biggie","Dynamite", "Starfall", "Jumbo", "Beast", "Frosty", "Storm", "Shark", "Ducky", "Bigshot", "Cobra"
+        };
         
         public int startAmountOfNpc, maxAmountOfNpc;
         public int followersForCapturing;
         
-        [NonSerialized] public PlayerSetting[] players;
-        [NonSerialized] public ColorBool[] ColorTable;
+        [NonSerialized] public List<PlayerSetting> players = new List<PlayerSetting>();
+        [NonSerialized] public List<CustomItem<string>> nicknameItems;
+        [NonSerialized] public List<CustomItem<Color>> colorItems;
         
-        public ColorBool FirstAvailableColorBool => ColorTable.First(x => !x.taken);
+        public CustomItem<Color> FirstAvailableColorItem => colorItems.First(x => !x.taken);
+        public CustomItem<string> FirstAvailableNicknameItem => nicknameItems.First(x => !x.taken);
 
-        public ColorBool RandomColorTable()
+        public CustomItem<Color> RandomColorTable()
         {
-            ColorBool[] available = ColorTable.Where(x => !x.taken).ToArray();
+            CustomItem<Color>[] available = colorItems.Where(x => !x.taken).ToArray();
 
             return available[Random.Range(0, available.Length)];
         }
+        
+        public void InitData()
+        {
+            colorItems = new List<CustomItem<Color>>();
 
-        public int NextAvailableIndex(int i)
+            foreach (Color leaderColor in leaderColors)
+            {
+                colorItems.Add(new CustomItem<Color>(leaderColor));
+            }
+            
+            nicknameItems = new List<CustomItem<string>>();
+            
+            foreach (string leaderName in leaderNames)
+            {
+                nicknameItems.Add(new CustomItem<string>(leaderName));
+            }
+        }
+
+        public int NextAvailableIndexColor(int i)
+        {
+            return NextIndex(colorItems, i);
+        }
+
+        public int NextAvailableIndexNickname(int i)
+        {
+            return NextIndex(nicknameItems, i);
+        }
+        
+        private int NextIndex<T>(List<CustomItem<T>> list, int i)
         {
             int index = i;
+
             while (true)
             {
-                if (index > ColorTable.Length - 1)
+                if (index > list.Count - 1)
                     index = 0;
                 
-                if (ColorTable[index].taken)
+                if (list[index].taken)
                 {
                     index++;
                     continue;
@@ -49,16 +83,26 @@ namespace Scriptables
             }
         }
         
-        public int PrevAvailableIndex(int i)
+        public int PrevAvailableIndexColor(int i)
+        {
+            return PreviousIndex(colorItems, i);
+        }
+        
+        public int PrevAvailableIndexNickname(int i)
+        {
+            return PreviousIndex(nicknameItems, i);
+        }
+
+        private int PreviousIndex<T>(List<CustomItem<T>> list, int i)
         {
             int index = i;
             
             while (true)
             {
                 if (index < 0)
-                    index = ColorTable.Length - 1;
+                    index = list.Count - 1;
                 
-                if (ColorTable[index].taken)
+                if (list[index].taken)
                 {
                     index--;
                     continue;
@@ -67,33 +111,24 @@ namespace Scriptables
                 return index;
             }
         }
-
-        public void InitColorTable()
-        {
-            ColorTable = new ColorBool[leaderColors.Count];
-
-            for (var i = 0; i < leaderColors.Count; i++)
-            {
-                ColorTable[i] = new ColorBool(leaderColors[i]);
-            }
-        }
     }
 
     [System.Serializable]
-    public class ColorBool
+    public class CustomItem<T>
     {
-        public Color color;
+        public T value;
         public bool taken;
 
-        public ColorBool(Color c)
+        public CustomItem(T v)
         {
-            color = c;
+            value = v;
             taken = false;
         }
     }
 
     public class PlayerSetting
     {
-        public Color Color;
+        public string nickname;
+        public Color color;
     }
 }

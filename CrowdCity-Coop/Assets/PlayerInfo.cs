@@ -2,28 +2,55 @@
 using Scriptables;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class PlayerInfo : MonoBehaviour
 {
-    public Image image;
+    public Image colorImage;
     public TextMeshProUGUI playerName;
 
+    public Image nicknameBackground, colorBackground, readyImage;
+    public Button[] nicknameButtons, colorButtons;
+    
+    private PlayerSetupWindow _setupWindow;
     private PlayerSetting _playerSetting;
     private Color _currentColor;
-    private int _currentIndex;
+    private string _currentNickname;
+    private bool _nicknameSubmitted, _colorSubmitted, _isReady;
+    private int _currentColorIndex, _currentNicknameIndex;
     private GameSettings _gameSettings;
-    private ColorBool _currentColorBool;
 
-    private ColorBool CurrentColorBool
+    private CustomItem<string> _currentNicknameItem;
+    private CustomItem<Color> _currentColorItem;
+    
+    private PlayerInput _input;
+    public PlayerSetting PlayerSetting => _playerSetting;
+    public PlayerInput Input => _input;
+
+    private CustomItem<string> CurrentNicknameItem
     {
         set
         {
-            if (_currentColorBool != null && _currentColorBool != value)
-                _currentColorBool.taken = false;
-            _currentColorBool = value;
-            _currentColorBool.taken = true;
-            CurrentColor = _currentColorBool.color;
+            if (_currentNicknameItem != null && _currentNicknameItem != value)
+                _currentNicknameItem.taken = false;
+            
+            _currentNicknameItem = value;
+            _currentNicknameItem.taken = true;
+            CurrentNickname = _currentNicknameItem.value;
+        }
+    }
+    
+    private CustomItem<Color> CurrentColorItem
+    {
+        set
+        {
+            if (_currentColorItem != null && _currentColorItem != value)
+                _currentColorItem.taken = false;
+            
+            _currentColorItem = value;
+            _currentColorItem.taken = true;
+            CurrentColor = _currentColorItem.value;
         }
     }
 
@@ -32,32 +59,157 @@ public class PlayerInfo : MonoBehaviour
         set
         {
             _currentColor = value;
-            _playerSetting.Color = _currentColor;
-            image.color = _currentColor;
+            _playerSetting.color = _currentColor;
+            colorImage.color = _currentColor;
+        }
+    }
+    
+    private string CurrentNickname
+    {
+        set
+        {
+            _currentNickname = value;
+            _playerSetting.nickname = _currentNickname;
+            playerName.text = _currentNickname;
         }
     }
 
-    public void SetInfo(GameSettings gs, PlayerSetting s, int index)
+    private bool NicknameSubmitted
     {
+        set
+        {
+            _nicknameSubmitted = value;
+
+            nicknameBackground.enabled = !_nicknameSubmitted;
+            foreach (Button button in nicknameButtons)
+            {
+                button.interactable = !_nicknameSubmitted;
+            }
+            
+            ColorSubmitted = false;
+        }
+    }
+    
+    private bool ColorSubmitted
+    {
+        set
+        {
+            _colorSubmitted = value;
+
+            colorBackground.enabled = _nicknameSubmitted && !_colorSubmitted;
+            foreach (Button button in colorButtons)
+            {
+                button.interactable = _nicknameSubmitted && !_colorSubmitted;
+            }
+
+            Ready = _nicknameSubmitted && _colorSubmitted;
+        }
+    }
+
+    private bool Ready
+    {
+        set
+        {
+            _isReady = value;
+            readyImage.enabled = _isReady;
+            
+            if(_isReady)
+                _setupWindow.OnPlayerReady();
+        }
+    }
+
+    public void SetInfo(PlayerSetupWindow sw, GameSettings gs, PlayerSetting s, PlayerInput input)
+    {
+        _setupWindow = sw;
         _gameSettings = gs;
         _playerSetting = s;
-        _currentIndex = 0;
-        playerName.text = "Player " + (index + 1);
+        _currentColorIndex = 0;
+        _input = input;
+
+        NicknameSubmitted = false;
+
+        CurrentColorItem = _gameSettings.FirstAvailableColorItem;
+        CurrentNicknameItem = _gameSettings.FirstAvailableNicknameItem;
+    }
+
+    public void OnSubmit()
+    {
+        if(_isReady) return;
+
+        if (_nicknameSubmitted)
+        {
+            ColorSubmitted = true;
+            Ready = true;
+            return;
+        }
+
+        NicknameSubmitted = true;
+    }
+    
+    public void OnNextClick()
+    {
+        if(_colorSubmitted) return;
         
-        CurrentColorBool = _gameSettings.FirstAvailableColorBool;
+        if (_nicknameSubmitted)
+        {
+            NextColor();
+            return;
+        }
+        
+        NextNickname();
+    }
+
+    public void OnPreviousClick()
+    {
+        if(_colorSubmitted) return;
+        
+        if (_nicknameSubmitted)
+        {
+            PreviousColor();
+            return;
+        }
+        
+        PreviousNickname();
     }
     
-    public void NextColor()
+    private void NextColor()
     {
-        _currentIndex = _gameSettings.NextAvailableIndex(_currentIndex++);
-
-        CurrentColorBool = _gameSettings.ColorTable[_currentIndex];
+        _currentColorIndex = _gameSettings.NextAvailableIndexColor(_currentColorIndex++);
+        CurrentColorItem = _gameSettings.colorItems[_currentColorIndex];
     }
     
-    public void PrevColor()
+    private void PreviousColor()
     {
-        _currentIndex = _gameSettings.PrevAvailableIndex(_currentIndex--);
+        _currentColorIndex = _gameSettings.PrevAvailableIndexColor(_currentColorIndex--);
+        CurrentColorItem = _gameSettings.colorItems[_currentColorIndex];
+    }
 
-        CurrentColorBool = _gameSettings.ColorTable[_currentIndex];
+    private void NextNickname()
+    {
+        _currentNicknameIndex = _gameSettings.NextAvailableIndexNickname(_currentNicknameIndex++);
+        CurrentNicknameItem = _gameSettings.nicknameItems[_currentNicknameIndex];
+    }
+
+    private void PreviousNickname()
+    {
+        _currentNicknameIndex = _gameSettings.PrevAvailableIndexNickname(_currentNicknameIndex--);
+        CurrentNicknameItem = _gameSettings.nicknameItems[_currentNicknameIndex];
+    }
+
+    public void Leave()
+    {
+        _setupWindow.RemovePlayer(this);
+    }
+
+    public void Clear()
+    {
+        if (_isReady)
+            _setupWindow.OnPlayerUnready();
+        Ready = false;
+        NicknameSubmitted = false;
+        ColorSubmitted = false;
+        
+        _currentColorItem.taken = false;
+        _currentNicknameItem.taken = false;
     }
 }

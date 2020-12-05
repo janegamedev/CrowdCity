@@ -61,6 +61,7 @@ public class Npc : MonoBehaviour
 
     public void SetLeader(Leader lead)
     {
+        //TODO: shit
         if (_currentState != followerState)
         {
             _currentState.OnStateEnd(this);

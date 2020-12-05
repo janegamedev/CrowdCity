@@ -1,51 +1,103 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Scriptables;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class PlayerSetupWindow : Window
 {
-    public Transform parent;
-    public GameObject playerInfoPrefab;
+    /*public Transform parent;*/
+    public List<PlayerInfo> playerInfos;
+    public PlayerInputManager inputManager;
 
     public GameSettings gameSettings;
-    private List<PlayerInfo> _playerInfos = new List<PlayerInfo>();
-    public void SetPlayers(int amount)
+    private PlayerInfo LastActive => playerInfos.FirstOrDefault(x => x.gameObject.activeSelf);
+    private int PlayersActive => playerInfos.Count(x => x.gameObject.activeSelf);
+    private int _playersReady = 0;
+    
+    private int PlayersCount()
     {
-        if(_playerInfos.Count > 0)
-            ResetInfos();
-        
-        _playerInfos = new List<PlayerInfo>();
-        gameSettings.InitColorTable();
-        gameSettings.players = new PlayerSetting[amount];
+        PlayerInfo info = LastActive;
+        return info == null ? -1 : playerInfos.IndexOf(info);
+    } 
 
-        for (var i = 0; i < gameSettings.players.Length; i++)
-        {
-            PlayerSetting setting = new PlayerSetting();
-            gameSettings.players[i] = setting;
-            
-            PlayerInfo info = Instantiate(playerInfoPrefab, parent).GetComponent<PlayerInfo>();
-            info.SetInfo(gameSettings, setting, i);
-            _playerInfos.Add(info);
-        }
+    private void Start()
+    {
+        gameSettings.InitData();
     }
 
     private void ResetInfos()
     {
-        for (int i = _playerInfos.Count - 1; i >= 0; i--)
+        _playersReady = 0;
+        
+        foreach (PlayerInfo info in playerInfos)
         {
-            Destroy(_playerInfos[i].gameObject);
+            info.Clear();
+            info.gameObject.SetActive(false);
         }
+
+        gameSettings.players.Clear();
     }
 
     public void OnBackPress()
     {
+        ResetInfos();
+        UIManager.GetWindow<MainMenuWindow>().Open();
         Close();
-        UIManager.GetWindow<SelectionWindow>().Open();
     }
     
     public void OnPlayPress()
     {
         SceneManager.LoadScene("SampleScene");
+    }
+
+    public void OnPlayerJoined(PlayerInput player)
+    {
+        PlayerInfo info = playerInfos[PlayersCount() + 1];
+        info.gameObject.SetActive(true);
+        
+        PlayerSetting setting = new PlayerSetting();
+        gameSettings.players.Add(setting);
+        
+        info.SetInfo(this, gameSettings, setting, player);
+    }
+
+    public void OnPlayerLeft(PlayerInput player)
+    {
+
+    }
+
+    public void RemovePlayer(PlayerInfo player)
+    {
+        int index = playerInfos.IndexOf(player);
+
+        if (index != -1)
+        {
+            player.gameObject.SetActive(false);
+            player.transform.SetSiblingIndex(playerInfos.Count - 1);
+            playerInfos.RemoveAt(index);
+            playerInfos.Add(player);
+            gameSettings.players.RemoveAt(index);
+        }
+    }
+
+    public void OnPlayerReady()
+    {
+        _playersReady++;
+        
+        if(_playersReady == PlayersActive)
+            Debug.Log("ALL player ready");
+    }
+    
+    public void OnPlayerUnready()
+    {
+        _playersReady--;
+        
+        if(_playersReady == PlayersActive)
+            Debug.Log("ALL player ready");
+        
+        if(_playersReady < PlayersActive)
+            Debug.Log("Not all players ready");
     }
 }

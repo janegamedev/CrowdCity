@@ -8,9 +8,9 @@
 
     public void OnModePress(int amount)
     {
-        Close();
+        /*Close();
         PlayerSetupWindow setup = UIManager.GetWindow<PlayerSetupWindow>();
         setup.SetPlayers(amount);
-        setup.Open();
+        setup.Open();*/
     }
 }
