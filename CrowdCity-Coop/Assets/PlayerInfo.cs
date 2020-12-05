@@ -110,11 +110,11 @@ public class PlayerInfo : MonoBehaviour
     {
         set
         {
+            if(!_isReady && value)
+                _setupWindow.OnPlayerReady();
+            
             _isReady = value;
             readyImage.enabled = _isReady;
-            
-            if(_isReady)
-                _setupWindow.OnPlayerReady();
         }
     }
 
@@ -205,6 +205,7 @@ public class PlayerInfo : MonoBehaviour
     {
         if (_isReady)
             _setupWindow.OnPlayerUnready();
+        
         Ready = false;
         NicknameSubmitted = false;
         ColorSubmitted = false;

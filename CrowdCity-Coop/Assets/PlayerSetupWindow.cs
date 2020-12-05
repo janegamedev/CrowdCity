@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Scriptables;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -10,12 +12,38 @@ public class PlayerSetupWindow : Window
     /*public Transform parent;*/
     public List<PlayerInfo> playerInfos;
     public PlayerInputManager inputManager;
+    public int startDelay;
+    public TextMeshProUGUI timer;
 
     public GameSettings gameSettings;
     private PlayerInfo LastActive => playerInfos.FirstOrDefault(x => x.gameObject.activeSelf);
     private int PlayersActive => playerInfos.Count(x => x.gameObject.activeSelf);
-    private int _playersReady = 0;
-    
+    private int _playersReady = 0, _timer;
+    private bool _timerIsOn = false;
+
+    private bool TimerIsOn
+    {
+        set
+        {
+            if(_timerIsOn && !value)
+                StopAllCoroutines();
+            
+            _timerIsOn = value;
+
+            if (_timer != startDelay)
+            {
+                _timer = startDelay;
+                timer.text = _timer.ToString();
+            }
+            
+            timer.gameObject.SetActive(_timerIsOn);
+            
+            if (_timerIsOn)
+                StartCoroutine(StartTimer());
+        }
+    }
+
+
     private int PlayersCount()
     {
         PlayerInfo info = LastActive;
@@ -61,6 +89,8 @@ public class PlayerSetupWindow : Window
         gameSettings.players.Add(setting);
         
         info.SetInfo(this, gameSettings, setting, player);
+
+        TimerIsOn = false;
     }
 
     public void OnPlayerLeft(PlayerInput player)
@@ -78,6 +108,7 @@ public class PlayerSetupWindow : Window
             player.transform.SetSiblingIndex(playerInfos.Count - 1);
             playerInfos.RemoveAt(index);
             playerInfos.Add(player);
+            player.Clear();
             gameSettings.players.RemoveAt(index);
         }
     }
@@ -85,19 +116,27 @@ public class PlayerSetupWindow : Window
     public void OnPlayerReady()
     {
         _playersReady++;
-        
-        if(_playersReady == PlayersActive)
-            Debug.Log("ALL player ready");
+        TimerIsOn = _playersReady == PlayersActive;
     }
     
     public void OnPlayerUnready()
     {
         _playersReady--;
+
+        TimerIsOn = false;
+        TimerIsOn = _playersReady == PlayersActive;
+    }
+
+    IEnumerator StartTimer()
+    {
+        while (_timer > 0)
+        {
+            timer.text = _timer.ToString();
+            _timer--;
+         
+            yield return new WaitForSeconds(1);
+        }
         
-        if(_playersReady == PlayersActive)
-            Debug.Log("ALL player ready");
-        
-        if(_playersReady < PlayersActive)
-            Debug.Log("Not all players ready");
+        SceneManager.LoadScene("SampleScene");
     }
 }
