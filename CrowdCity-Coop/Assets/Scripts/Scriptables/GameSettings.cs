@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Player;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Utilities;
 using Random = UnityEngine.Random;
 
 namespace Scriptables
@@ -16,7 +14,7 @@ namespace Scriptables
         
         public int maxAmountOfPlayers;
         public GameObject playerPrefab, aiPrefab, npcPrefab;
-        public List<Color> leaderColors;
+        public List<Skin> leaderSkins;
         public List<string> leaderNames = new List<string>()
         {
             "Basher", "Cannonball", "Snowflake", "Jelly", "Genius", "Izzy", "Wheels", "Stretch", "Bird", "Biggie","Dynamite", "Starfall", "Jumbo", "Beast", "Frosty", "Storm", "Shark", "Ducky", "Bigshot", "Cobra"
@@ -25,16 +23,26 @@ namespace Scriptables
         public int startAmountOfNpc, maxAmountOfNpc;
         public int followersForCapturing;
         
-        [NonSerialized] public List<PlayerSetting> players = new List<PlayerSetting>();
+        [NonSerialized] public List<PlayerConfiguration> players = new List<PlayerConfiguration>();
         [NonSerialized] public List<CustomItem<string>> nicknameItems;
-        [NonSerialized] public List<CustomItem<Color>> colorItems;
+        [NonSerialized] public List<CustomItem<Skin>> skinItems;
         
-        public CustomItem<Color> FirstAvailableColorItem => colorItems.First(x => !x.taken);
+        public CustomItem<Skin> FirstAvailableColorItem => skinItems.First(x => !x.taken);
         public CustomItem<string> FirstAvailableNicknameItem => nicknameItems.First(x => !x.taken);
 
-        public CustomItem<Color> RandomColorTable()
+        public CustomItem<Skin> RandomSkinTable()
         {
-            CustomItem<Color>[] available = colorItems.Where(x => !x.taken).ToArray();
+            CustomItem<Skin>[] available = skinItems.Where(x => !x.taken).ToArray();
+
+            if (available.Length == 0)
+                return null;
+            
+            return available[Random.Range(0, available.Length)];
+        }
+        
+        public CustomItem<string> RandomNicknameTable()
+        {
+            CustomItem<string>[] available = nicknameItems.Where(x => !x.taken).ToArray();
 
             if (available.Length == 0)
                 return null;
@@ -44,11 +52,11 @@ namespace Scriptables
         
         public void InitData()
         {
-            colorItems = new List<CustomItem<Color>>();
+            skinItems = new List<CustomItem<Skin>>();
 
-            foreach (Color leaderColor in leaderColors)
+            foreach (Skin leaderColor in leaderSkins)
             {
-                colorItems.Add(new CustomItem<Color>(leaderColor));
+                skinItems.Add(new CustomItem<Skin>(leaderColor));
             }
             
             nicknameItems = new List<CustomItem<string>>();
@@ -59,9 +67,9 @@ namespace Scriptables
             }
         }
 
-        public int NextAvailableIndexColor(int i)
+        public int NextAvailableIndexSkin(int i)
         {
-            return NextIndex(colorItems, i);
+            return NextIndex(skinItems, i);
         }
 
         public int NextAvailableIndexNickname(int i)
@@ -90,7 +98,7 @@ namespace Scriptables
         
         public int PrevAvailableIndexColor(int i)
         {
-            return PreviousIndex(colorItems, i);
+            return PreviousIndex(skinItems, i);
         }
         
         public int PrevAvailableIndexNickname(int i)
@@ -129,13 +137,5 @@ namespace Scriptables
             value = v;
             taken = false;
         }
-    }
-
-    public class PlayerSetting
-    {
-        public string nickname;
-        public Color color;
-        public string mapScheme;
-        public ReadOnlyArray<InputDevice> devices;
     }
 }

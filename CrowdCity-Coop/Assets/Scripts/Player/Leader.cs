@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Scriptables;
 using UnityEngine;
 
@@ -7,9 +9,15 @@ namespace Player
     public class Leader: MonoBehaviour
     {
         public LayerMask layerMask;
+        public BoolVariable checkCollider;
+        public List<SkinObject> skins;
+        
         private int _followers = 1;
-        private Color _leaderColor;
-        private PlayerSetting _playerSetting;
+        private Skin _currentSkin;
+        private SkinObject _currentSkinObject;
+        private CharacterController _controller;
+        private PlayerConfiguration _playerConfiguration;
+        private bool _isInit;
 
         public int Followers
         {
@@ -17,16 +25,50 @@ namespace Player
             set => _followers = value;
         }
 
-        public Color LeaderColor => _leaderColor;
-        public int LeaderboardPlace { get; set; }
-        public PlayerSetting PlayerSettings => _playerSetting;
-
-        public void SetLeader(Color c)
+        public Skin CurrentSkin 
         {
-            _leaderColor = c;
-            GetComponentInChildren<Renderer>().material.SetColor("_BaseColor", _leaderColor);
+            get => _currentSkin;
+            private set
+            {
+                if (_currentSkin != null && _currentSkin != value)
+                {
+                    _currentSkinObject.go.SetActive(false);    
+                }
+                
+                _currentSkin = value;
+                
+                if(_currentSkin == null) return;
+      
+                _currentSkinObject = skins.FirstOrDefault(x => x.skinType == _currentSkin);
+                _currentSkinObject.go.SetActive(true);
+            }
+        }
+        public int LeaderboardPlace { get; set; }
+        public PlayerConfiguration PlayerConfigurations => _playerConfiguration;
+
+        private void Awake()
+        {
+            _controller = GetComponent<CharacterController>();
         }
 
+        public void SetConfiguration(PlayerConfiguration config)
+        {
+            _playerConfiguration = config;
+            CurrentSkin = _playerConfiguration.skin;
+            _playerConfiguration.onSkinUpdated += UpdateSkin;
+            _playerConfiguration.onNicknameUpdated += UpdateNick;
+        }
+
+        private void UpdateSkin()
+        {
+            CurrentSkin = _playerConfiguration.skin;
+        }
+
+        private void UpdateNick()
+        {
+            
+        }
+        
         public void KillPlayer(Leader leader)
         {
             FindObjectOfType<GameManager>().DestroyLeader(leader);
@@ -43,9 +85,12 @@ namespace Player
         {
             CheckCollider();
         }
-
+        
+        
         private void CheckCollider()
         {
+            if(!checkCollider.value) return;
+            
             foreach (Collider col in Physics.OverlapSphere(transform.position, 2, layerMask))
             {
                 if (col.TryGetComponent(out Npc npc))
@@ -63,5 +108,12 @@ namespace Player
                 }
             }
         }
+    }
+
+    [System.Serializable]
+    public class SkinObject
+    {
+        public GameObject go;
+        public Skin skinType;
     }
 }

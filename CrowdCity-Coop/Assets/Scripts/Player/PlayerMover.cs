@@ -26,11 +26,13 @@ namespace Player
 
         private void Update()
         {
+            if(_moveInput == Vector2.zero) return;
+            
             _moveDirection = new Vector3(_moveInput.x, 0 , _moveInput.y);
             _moveDirection = transform.TransformDirection(_moveDirection);
             _moveDirection *= moveSpeed;
 
-            controller.Move(_moveDirection * Time.deltaTime);
+            controller.SimpleMove(_moveDirection);
         }
     }
 }

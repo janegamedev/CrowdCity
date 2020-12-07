@@ -23,7 +23,7 @@ public class Npc : MonoBehaviour
         set
         {
             _leader = value;
-            _renderer.material.color = _leader.LeaderColor;
+            /*_renderer.material.color = _leader.CurrentSkin;*/
         }
     }
 

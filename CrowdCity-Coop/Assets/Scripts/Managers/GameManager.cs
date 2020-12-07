@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
         GameResources.gm = this;
         _inputManager = FindObjectOfType<PlayerInputManager>();
         
-        SpawnLeaders();
+        /*SpawnLeaders();*/
     }
     
     private void SpawnLeaders()
@@ -40,21 +40,19 @@ public class GameManager : MonoBehaviour
 
         while (_leaders.Count < settings.maxAmountOfPlayers)
         {
-            var c = settings.RandomColorTable();
+            var c = settings.RandomSkinTable();
             c.taken = true;
 
-            SpawnLeader(settings.aiPrefab, c.value);
+            /*SpawnLeader(settings.aiPrefab, c.value);*/
         }
     }
-    
-    
+
     private Leader SpawnLeader(GameObject prefab, Color c)
     {
         Transform random = spawnSpots[Random.Range(0, spawnSpots.Count)];
         spawnSpots.Remove(random);
         
         Leader l = Instantiate(prefab, random.position, Quaternion.identity, transform).GetComponent<Leader>();
-        l.SetLeader(c);
         _leaders.Add(l);
         
         return l;

@@ -451,6 +451,18 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: afd1026e-bed0-4358-8600-0f480f20cca2
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 211d9a02-1fb9-4a9c-ba91-3d2d889766b2
+    m_ActionName: Player/NextColor[/DualShock4GamepadHID/dpad/right,/Keyboard/d]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 91642543-29af-475b-b958-6952de4bb9df
+    m_ActionName: Player/PreviousColor[/DualShock4GamepadHID/dpad/left,/Keyboard/a]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 59effbb9-73b4-4202-af04-a5634fc9759e
+    m_ActionName: Player/Submit[/DualShock4GamepadHID/buttonSouth,/Keyboard/x]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Gamepad
   m_DefaultActionMap: UI
@@ -3095,7 +3107,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -403}
   m_SizeDelta: {x: 200, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1541242678
@@ -3480,7 +3492,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -56.75}
+  m_AnchoredPosition: {x: 0, y: -459.74997}
   m_SizeDelta: {x: 200, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1914631388

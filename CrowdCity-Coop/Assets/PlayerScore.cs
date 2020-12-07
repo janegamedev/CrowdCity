@@ -18,7 +18,7 @@ public class PlayerScore : MonoBehaviour
         _leader = l;
         placeText.text = _leader.LeaderboardPlace.ToString();
         amountText.text = "x" + _leader.Followers.ToString();
-        nicknameText.text = _leader.PlayerSettings.nickname;
+        nicknameText.text = _leader.PlayerConfigurations.nickname;
     }
 
     public void UpdateInfo()
